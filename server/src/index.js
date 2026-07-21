@@ -7,18 +7,18 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors());
-app.use(express.json({ limit: '5mb' })); // limit raised for Slice 2 CSV uploads
+app.use(express.json({ limit: '5mb' }));
+
+// Slice 2 - Import tab: CSV upload + auto-detect + preview
+app.use(require('./routes/import'));
 
 // Slice 1 - Customer Info routes (POST /api/customers, PUT /api/customers/:id/steps/:stepId)
 app.use('/api', require('./routes/customers'));
 
-// Slice 2 - Import preview routes (POST /api/customers/:id/import/preview)
-app.use(require('./routes/import'));
-
-// Slice 3 - Data Mapping routes (POST .../mapping/suggest, PUT .../mapping)
+// Slice 3 - Data Mapping routes
 app.use(require('./routes/mapping'));
 
-// Slice 5 - Import commit route (POST /api/customers/:id/import/commit)
+// Slice 5 - Import commit route (mounted as one line)
 app.use(require('./routes/importCommit'));
 
 // Health check
@@ -81,14 +81,8 @@ app.get('/api/tenants/:customerId', (req, res) => {
 // Slice 4 - Tenant Setup routes (PUT /api/tenants/:customerId)
 app.use('/api/tenants', require('./routes/tenants'));
 
-// Start the server only when run directly (`node src/index.js`). When this
-// module is required by a test, we export `app` instead so integration tests
-// can start it on an ephemeral port.
-if (require.main === module) {
-  app.listen(PORT, () => {
-    console.log(`🚀 Onboarding API server running at http://localhost:${PORT}`);
-    console.log(`   Health check: http://localhost:${PORT}/api/health`);
-  });
-}
-
-module.exports = app;
+// Start server
+app.listen(PORT, () => {
+  console.log(`🚀 Onboarding API server running at http://localhost:${PORT}`);
+  console.log(`   Health check: http://localhost:${PORT}/api/health`);
+});
