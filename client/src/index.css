@@ -228,3 +228,27 @@ header p {
   opacity: 0.6;
   cursor: not-allowed;
 }
+
+/* Slice 2 - Import preview table */
+.preview-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.85rem;
+}
+
+.preview-table th,
+.preview-table td {
+  border: 1px solid #e5e7eb;
+  padding: 6px 10px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.preview-table th {
+  background: #f9fafb;
+  font-weight: 600;
+}
+
+.preview-table tbody tr:nth-child(even) {
+  background: #fafafa;
+}
