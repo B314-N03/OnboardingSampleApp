@@ -19,19 +19,19 @@ const fs = require('fs');
 const path = require('path');
 const store = require('../data/store');
 const { suggestMapping, targetFieldNames } = require('../lib/mapping');
+const { sampleRoot } = require('../lib/sampleData');
 
 const router = express.Router();
-
-const SAMPLE_ROOT = path.join(__dirname, '..', '..', '..', 'sample-data');
 
 /** Resolve a friendly sample key (e.g. 'CustomerA', 'A', 'abc') to a folder. */
 function resolveSampleFolder(key) {
   if (!key) return null;
+  const root = sampleRoot();
   let folders = [];
   try {
-    folders = fs.readdirSync(SAMPLE_ROOT).filter(f => {
+    folders = fs.readdirSync(root).filter(f => {
       try {
-        return fs.statSync(path.join(SAMPLE_ROOT, f)).isDirectory();
+        return fs.statSync(path.join(root, f)).isDirectory();
       } catch {
         return false;
       }
@@ -73,7 +73,7 @@ function parseCsv(text) {
 function readSampleClients(key) {
   const folder = resolveSampleFolder(key);
   if (!folder) return null;
-  const file = path.join(SAMPLE_ROOT, folder, 'clients.csv');
+  const file = path.join(sampleRoot(), folder, 'clients.csv');
   if (!fs.existsSync(file)) return null;
   return parseCsv(fs.readFileSync(file, 'utf8'));
 }
