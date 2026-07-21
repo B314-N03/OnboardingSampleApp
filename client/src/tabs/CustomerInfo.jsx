@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { apiFetch } from '../api';
 
 const EMPTY_FORM = { name: '', contactEmail: '', industry: '', region: '' };
 
@@ -22,7 +23,7 @@ function CustomerInfo({ data, loadDashboard }) {
     setErrors([]);
 
     try {
-      const res = await fetch('/api/customers', {
+      const res = await apiFetch('/api/customers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
@@ -49,7 +50,7 @@ function CustomerInfo({ data, loadDashboard }) {
     setBusyCustomerId(customerId);
     setBanner(null);
     try {
-      const res = await fetch(`/api/customers/${customerId}/steps/step_1`, {
+      const res = await apiFetch(`/api/customers/${customerId}/steps/step_1`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'completed' })

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { apiFetch } from '../api';
 
 /**
  * Slice 2 - Import tab.
@@ -28,7 +29,7 @@ function Import({ data = [] }) {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/customers/${targetId}/import/preview`, {
+      const res = await apiFetch(`/api/customers/${targetId}/import/preview`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body)
