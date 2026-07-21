@@ -81,8 +81,14 @@ app.get('/api/tenants/:customerId', (req, res) => {
 // Slice 4 - Tenant Setup routes (PUT /api/tenants/:customerId)
 app.use('/api/tenants', require('./routes/tenants'));
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Onboarding API server running at http://localhost:${PORT}`);
-  console.log(`   Health check: http://localhost:${PORT}/api/health`);
-});
+// Start the server only when run directly (`node src/index.js`). When this
+// module is required by a test, we export `app` instead so integration tests
+// can start it on an ephemeral port.
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`🚀 Onboarding API server running at http://localhost:${PORT}`);
+    console.log(`   Health check: http://localhost:${PORT}/api/health`);
+  });
+}
+
+module.exports = app;
