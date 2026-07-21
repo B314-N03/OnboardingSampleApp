@@ -105,27 +105,83 @@ function DashboardTab({ data, loading, error }) {
     return <div className="placeholder"><p>No customers in the onboarding queue</p></div>;
   }
 
+  return <DashboardQueue data={data} />;
+}
+
+// Slice 5 - triage: next-action hint + filter/sort of the queue.
+function nextActionFor(steps) {
+  const next = (steps || []).find(s => s.status !== 'completed');
+  return next ? next.name : null;
+}
+
+function DashboardQueue({ data }) {
+  const [hideCompleted, setHideCompleted] = useState(false);
+  const [sortBy, setSortBy] = useState('default'); // 'default' | 'progress-asc' | 'progress-desc'
+
+  let queue = data.slice();
+  if (hideCompleted) {
+    queue = queue.filter(item => item.progressPercent < 100);
+  }
+  if (sortBy === 'progress-asc') {
+    queue.sort((a, b) => a.progressPercent - b.progressPercent);
+  } else if (sortBy === 'progress-desc') {
+    queue.sort((a, b) => b.progressPercent - a.progressPercent);
+  }
+
   return (
     <div>
       <h2>Onboarding Queue</h2>
-      <p style={{ color: '#6b7280', marginBottom: '20px' }}>
-        {data.length} customer(s) awaiting onboarding
+      <p style={{ color: '#6b7280', marginBottom: '12px' }}>
+        Showing {queue.length} of {data.length} customer(s)
       </p>
 
-      {data.map(item => (
-        <div key={item.customerId} className="customer-card">
-          <h3>{item.customerName}</h3>
-          <div className="customer-meta">
-            <span>📍 {item.customerRegion}</span>
-            <span>🏭 {item.customerIndustry}</span>
-          </div>
+      <div className="triage-controls">
+        <label>
+          Sort:&nbsp;
+          <select value={sortBy} onChange={e => setSortBy(e.target.value)}>
+            <option value="default">Default</option>
+            <option value="progress-asc">Progress (low to high)</option>
+            <option value="progress-desc">Progress (high to low)</option>
+          </select>
+        </label>
+        <label style={{ marginLeft: '16px' }}>
+          <input
+            type="checkbox"
+            checked={hideCompleted}
+            onChange={e => setHideCompleted(e.target.checked)}
+          />
+          &nbsp;Hide completed (100%)
+        </label>
+      </div>
 
-          <div className="progress-section">
-            <ProgressBar percent={item.progressPercent} />
-            <Checklist steps={item.steps} />
+      {queue.length === 0 ? (
+        <div className="placeholder"><p>No customers match the current filter</p></div>
+      ) : queue.map(item => {
+        const nextAction = nextActionFor(item.steps);
+        return (
+          <div key={item.customerId} className="customer-card">
+            <h3>{item.customerName}</h3>
+            <div className="customer-meta">
+              <span>📍 {item.customerRegion}</span>
+              <span>🏭 {item.customerIndustry}</span>
+              {item.importedRecordCount > 0 && (
+                <span>📥 {item.importedRecordCount} records imported</span>
+              )}
+            </div>
+
+            <div className="next-action">
+              {nextAction
+                ? <><strong>Next action:</strong> {nextAction}</>
+                : <><strong>✓ Onboarding complete</strong></>}
+            </div>
+
+            <div className="progress-section">
+              <ProgressBar percent={item.progressPercent} />
+              <Checklist steps={item.steps} />
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

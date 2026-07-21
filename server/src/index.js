@@ -18,6 +18,9 @@ app.use('/api', require('./routes/customers'));
 // Slice 3 - Data Mapping routes
 app.use(require('./routes/mapping'));
 
+// Slice 5 - Import commit route (mounted as one line)
+app.use(require('./routes/importCommit'));
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
@@ -58,7 +61,8 @@ app.get('/api/onboarding', (req, res) => {
       ...state,
       customerName: customer?.name || 'Unknown',
       customerIndustry: customer?.industry || '',
-      customerRegion: customer?.region || ''
+      customerRegion: customer?.region || '',
+      importedRecordCount: customer?.importedRecordCount || 0 // Slice 5
     };
   });
   
