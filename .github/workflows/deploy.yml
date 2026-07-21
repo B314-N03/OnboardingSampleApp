@@ -33,6 +33,10 @@ jobs:
       - name: Build
         run: npm run build
         working-directory: client
+        env:
+          # Optional: set repo variable VITE_API_BASE to a hosted backend URL.
+          # If unset, the built app defaults to http://localhost:3001.
+          VITE_API_BASE: ${{ vars.VITE_API_BASE }}
 
       - uses: actions/upload-pages-artifact@v3
         with:
