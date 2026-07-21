@@ -98,6 +98,8 @@ router.post('/api/customers/:id/import/commit', (req, res) => {
     rows = state.uploadedRows;
   } else if (state.importPreview && Array.isArray(state.importPreview.rows)) {
     rows = state.importPreview.rows;
+  } else if (typeof body.csv === 'string' && body.csv.trim().length > 0) {
+    rows = parseCsv(body.csv);
   } else if (body.sampleKey) {
     rows = loadSampleRows(body.sampleKey, body.sampleFile);
     if (rows === null) {
