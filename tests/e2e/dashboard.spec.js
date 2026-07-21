@@ -24,9 +24,13 @@ test.describe('Onboarding Dashboard', () => {
   test('should display example customer in onboarding queue', async ({ page }) => {
     await page.goto('/');
 
-    // Wait for data to load and verify example customer is shown
-    await expect(page.locator('.customer-card')).toBeVisible();
-    await expect(page.locator('.customer-card h3')).toContainText('Acme Corporation');
+    // Wait for data to load and verify the seeded example customer is shown.
+    // Scope to the Acme card by name: the shared in-memory backend may hold
+    // other customers created by earlier tests, so a bare `.customer-card`
+    // locator would match several elements.
+    const acmeCard = page.locator('.customer-card', { hasText: 'Acme Corporation' });
+    await expect(acmeCard).toBeVisible();
+    await expect(acmeCard.locator('h3')).toContainText('Acme Corporation');
   });
 
   test('should switch to the (now real) Customer Info tab', async ({ page }) => {
