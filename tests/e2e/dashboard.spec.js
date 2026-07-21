@@ -29,13 +29,25 @@ test.describe('Onboarding Dashboard', () => {
     await expect(page.locator('.customer-card h3')).toContainText('Acme Corporation');
   });
 
-  test('should switch between tabs', async ({ page }) => {
+  test('should switch to the (now real) Customer Info tab', async ({ page }) => {
     await page.goto('/');
 
     // Click on Customer Info tab
     await page.getByRole('button', { name: 'Customer Info' }).click();
-    
-    // Verify placeholder content is shown
-    await expect(page.locator('.placeholder h2')).toContainText('Customer Info');
+
+    // The tab is now a real form, not a placeholder.
+    await expect(page.getByRole('heading', { name: 'Customer Info' })).toBeVisible();
+    await expect(page.locator('form.customer-form')).toBeVisible();
+  });
+
+  test('should show the triage controls on the dashboard', async ({ page }) => {
+    await page.goto('/');
+
+    // Slice 5 triage: sort control + hide-completed filter.
+    await expect(page.locator('.triage-controls select')).toBeVisible();
+    await expect(page.locator('.triage-controls input[type="checkbox"]')).toBeVisible();
+
+    // Each queued customer shows a "next action" hint.
+    await expect(page.locator('.customer-card .next-action').first()).toBeVisible();
   });
 });
