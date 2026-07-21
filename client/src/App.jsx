@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+import CustomerInfo from './tabs/CustomerInfo';
 
 // In dev, requests go through the Vite proxy (relative path).
 // In the built app (e.g. GitHub Pages) there is no proxy, so target the
@@ -21,26 +22,27 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    fetch(`${API_BASE}/api/onboarding`)
-      .then(async (res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        if (!Array.isArray(data)) throw new Error('Invalid response format');
-        return data;
-      })
-      .then(data => {
-        setOnboardingData(data);
-        setError(null);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('Failed to fetch onboarding data:', err);
-        setError(err.message);
-        setOnboardingData([]);
-        setLoading(false);
-      });
+  // Reusable dashboard fetch so tabs can trigger a refresh after mutations.
+  const loadDashboard = useCallback(async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/onboarding`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      if (!Array.isArray(data)) throw new Error('Invalid response format');
+      setOnboardingData(data);
+      setError(null);
+    } catch (err) {
+      console.error('Failed to fetch onboarding data:', err);
+      setError(err.message);
+      setOnboardingData([]);
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    loadDashboard();
+  }, [loadDashboard]);
 
   return (
     <div className="app">
@@ -66,7 +68,7 @@ function App() {
           <DashboardTab data={onboardingData} loading={loading} error={error} />
         )}
         {activeTab === 'customer-info' && (
-          <PlaceholderTab title="Customer Info" description="Collect and validate customer information" />
+          <CustomerInfo data={onboardingData} loadDashboard={loadDashboard} />
         )}
         {activeTab === 'data-mapping' && (
           <PlaceholderTab title="Data Mapping" description="Map customer data to platform configuration" />
