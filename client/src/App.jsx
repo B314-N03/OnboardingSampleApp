@@ -74,7 +74,7 @@ function App() {
           <TenantSetup />
         )}
         {activeTab === 'import' && (
-          <Import data={onboardingData} />
+          <Import data={onboardingData} loadDashboard={loadDashboard} />
         )}
       </main>
     </div>
