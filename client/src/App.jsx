@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
+// In dev, requests go through the Vite proxy (relative path).
+// In the built app (e.g. GitHub Pages) there is no proxy, so target the
+// backend directly. Override with VITE_API_BASE for a hosted backend.
+const API_BASE =
+  import.meta.env.VITE_API_BASE ||
+  (import.meta.env.PROD ? 'http://localhost:3001' : '');
+
 const TABS = [
   { id: 'dashboard', label: 'Dashboard' },
   { id: 'customer-info', label: 'Customer Info' },
@@ -15,7 +22,7 @@ function App() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch('/api/onboarding')
+    fetch(`${API_BASE}/api/onboarding`)
       .then(async (res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
