@@ -15,6 +15,9 @@ app.use(require('./routes/import'));
 // Slice 1 - Customer Info routes (POST /api/customers, PUT /api/customers/:id/steps/:stepId)
 app.use('/api', require('./routes/customers'));
 
+// Slice 3 - Data Mapping routes
+app.use(require('./routes/mapping'));
+
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });

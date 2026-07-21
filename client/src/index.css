@@ -252,3 +252,28 @@ header p {
 .preview-table tbody tr:nth-child(even) {
   background: #fafafa;
 }
+
+/* Data Mapping tab */
+.mapping-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 8px;
+}
+
+.mapping-table th,
+.mapping-table td {
+  text-align: left;
+  padding: 6px 10px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.9rem;
+}
+
+.mapping-table th {
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.mapping-table select {
+  padding: 4px 6px;
+  min-width: 160px;
+}
