@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'server/**'
+      - 'sample-data/**'
       - '.github/workflows/deploy-backend.yml'
   workflow_dispatch:
 
@@ -20,6 +21,11 @@ jobs:
 
       - name: Install Railway CLI
         run: npm install -g @railway/cli
+
+      # sample-data lives at the repo root but only server/ is deployed, so
+      # bundle a copy the backend can read at runtime (server/sample-data).
+      - name: Bundle sample data
+        run: cp -r sample-data server/sample-data
 
       - name: Deploy
         run: railway up --service onboarding-backend --ci

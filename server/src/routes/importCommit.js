@@ -27,10 +27,9 @@ const express = require('express');
 const store = require('../data/store');
 const { calculateProgress } = require('../models');
 const { transformRows } = require('../lib/transform');
+const { sampleRoot } = require('../lib/sampleData');
 
 const router = express.Router();
-
-const SAMPLE_DATA_DIR = path.join(__dirname, '..', '..', '..', 'sample-data');
 
 /** Minimal CSV parser (handles double-quoted fields). Used only for sampleKey. */
 function parseCsv(text) {
@@ -70,9 +69,10 @@ function parseCsv(text) {
 }
 
 function loadSampleRows(sampleKey, file = 'clients.csv') {
+  const root = sampleRoot();
   const safeKey = path.basename(sampleKey);
-  const filePath = path.join(SAMPLE_DATA_DIR, safeKey, file);
-  if (!filePath.startsWith(SAMPLE_DATA_DIR) || !fs.existsSync(filePath)) return null;
+  const filePath = path.join(root, safeKey, file);
+  if (!filePath.startsWith(root) || !fs.existsSync(filePath)) return null;
   return parseCsv(fs.readFileSync(filePath, 'utf8'));
 }
 
