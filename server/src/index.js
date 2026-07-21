@@ -74,6 +74,9 @@ app.get('/api/tenants/:customerId', (req, res) => {
   res.json(tenant);
 });
 
+// Slice 4 - Tenant Setup routes (PUT /api/tenants/:customerId)
+app.use('/api/tenants', require('./routes/tenants'));
+
 // Start server
 app.listen(PORT, () => {
   console.log(`🚀 Onboarding API server running at http://localhost:${PORT}`);
