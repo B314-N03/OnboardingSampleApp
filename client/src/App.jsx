@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import CustomerInfo from './tabs/CustomerInfo';
 import Import from './tabs/Import';
+import DataMapping from './tabs/DataMapping';
 
 // In dev, requests go through the Vite proxy (relative path).
 // In the built app (e.g. GitHub Pages) there is no proxy, so target the
@@ -72,7 +73,7 @@ function App() {
           <CustomerInfo data={onboardingData} loadDashboard={loadDashboard} />
         )}
         {activeTab === 'data-mapping' && (
-          <PlaceholderTab title="Data Mapping" description="Map customer data to platform configuration" />
+          <DataMapping onboardingData={onboardingData} />
         )}
         {activeTab === 'tenant-setup' && (
           <PlaceholderTab title="Tenant Setup" description="Provision and configure customer tenant" />
