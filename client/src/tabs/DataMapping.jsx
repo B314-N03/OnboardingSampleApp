@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { apiUrl } from '../api';
 
 // Target fields we can map source columns onto (mirrors server/src/lib/mapping.js).
 const TARGET_FIELDS = [
@@ -59,7 +60,7 @@ function DataMapping({ onboardingData }) {
 
   // Keep our own customer list so the tab works without Slice 1's App refactor.
   const loadCustomers = () => {
-    fetch('/api/onboarding')
+    fetch(apiUrl('/api/onboarding'))
       .then(res => (res.ok ? res.json() : []))
       .then(data => {
         const list = Array.isArray(data) ? data : [];
@@ -88,7 +89,7 @@ function DataMapping({ onboardingData }) {
     setError(null);
     setMessage(null);
     try {
-      const res = await fetch(`/api/customers/${customerId}/mapping/suggest`, {
+      const res = await fetch(apiUrl(`/api/customers/${customerId}/mapping/suggest`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sample })
@@ -124,7 +125,7 @@ function DataMapping({ onboardingData }) {
     setMessage(null);
     try {
       // 1. Persist the confirmed mapping.
-      const res = await fetch(`/api/customers/${customerId}/mapping`, {
+      const res = await fetch(apiUrl(`/api/customers/${customerId}/mapping`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ columnMap, valueMaps })
@@ -133,7 +134,7 @@ function DataMapping({ onboardingData }) {
       if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
 
       // 2. Advance step_2 via Slice 1's shared step endpoint.
-      const stepRes = await fetch(`/api/customers/${customerId}/steps/step_2`, {
+      const stepRes = await fetch(apiUrl(`/api/customers/${customerId}/steps/step_2`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'completed' })

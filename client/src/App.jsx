@@ -3,13 +3,7 @@ import CustomerInfo from './tabs/CustomerInfo';
 import Import from './tabs/Import';
 import DataMapping from './tabs/DataMapping';
 import TenantSetup from './tabs/TenantSetup';
-
-// In dev, requests go through the Vite proxy (relative path).
-// In the built app (e.g. GitHub Pages) there is no proxy, so target the
-// backend directly. Override with VITE_API_BASE for a hosted backend.
-const API_BASE =
-  import.meta.env.VITE_API_BASE ||
-  (import.meta.env.PROD ? 'http://localhost:3001' : '');
+import { apiUrl } from './api';
 
 const TABS = [
   { id: 'dashboard', label: 'Dashboard' },
@@ -28,7 +22,7 @@ function App() {
   // Reusable dashboard fetch so tabs can trigger a refresh after mutations.
   const loadDashboard = useCallback(async () => {
     try {
-      const res = await fetch(`${API_BASE}/api/onboarding`);
+      const res = await fetch(apiUrl('/api/onboarding'));
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       if (!Array.isArray(data)) throw new Error('Invalid response format');

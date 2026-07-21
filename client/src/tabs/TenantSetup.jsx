@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { apiUrl } from '../api';
 
 const PLANS = ['starter', 'professional', 'enterprise'];
 
@@ -16,7 +17,7 @@ function TenantSetup() {
   const [error, setError] = useState(null);
 
   const loadCustomers = useCallback(async () => {
-    const res = await fetch('/api/onboarding');
+    const res = await fetch(apiUrl('/api/onboarding'));
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     setCustomers(Array.isArray(data) ? data : []);
@@ -28,7 +29,7 @@ function TenantSetup() {
       setTenant(null);
       return;
     }
-    const res = await fetch(`/api/tenants/${customerId}`);
+    const res = await fetch(apiUrl(`/api/tenants/${customerId}`));
     if (res.status === 404) {
       setTenant(null);
       return;
@@ -58,7 +59,7 @@ function TenantSetup() {
   }, [selectedId, loadTenant]);
 
   const updateTenant = async (updates) => {
-    const res = await fetch(`/api/tenants/${selectedId}`, {
+    const res = await fetch(apiUrl(`/api/tenants/${selectedId}`), {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updates)
@@ -82,7 +83,7 @@ function TenantSetup() {
       setTenant(await updateTenant({ status: 'active' }));
 
       // Mark step_3 (Tenant Setup) complete via Slice 1's shared step endpoint.
-      const stepRes = await fetch(`/api/customers/${selectedId}/steps/step_3`, {
+      const stepRes = await fetch(apiUrl(`/api/customers/${selectedId}/steps/step_3`), {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'completed' })
