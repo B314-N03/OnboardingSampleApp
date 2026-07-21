@@ -24,18 +24,34 @@ test.describe('Onboarding Dashboard', () => {
   test('should display example customer in onboarding queue', async ({ page }) => {
     await page.goto('/');
 
-    // Wait for data to load and verify example customer is shown
-    await expect(page.locator('.customer-card')).toBeVisible();
-    await expect(page.locator('.customer-card h3')).toContainText('Acme Corporation');
+    // Wait for data to load and verify the seeded example customer is shown.
+    // Scope to the Acme card by name: the shared in-memory backend may hold
+    // other customers created by earlier tests, so a bare `.customer-card`
+    // locator would match several elements.
+    const acmeCard = page.locator('.customer-card', { hasText: 'Acme Corporation' });
+    await expect(acmeCard).toBeVisible();
+    await expect(acmeCard.locator('h3')).toContainText('Acme Corporation');
   });
 
-  test('should switch between tabs', async ({ page }) => {
+  test('should switch to the (now real) Customer Info tab', async ({ page }) => {
     await page.goto('/');
 
     // Click on Customer Info tab
     await page.getByRole('button', { name: 'Customer Info' }).click();
-    
-    // Verify placeholder content is shown
-    await expect(page.locator('.placeholder h2')).toContainText('Customer Info');
+
+    // The tab is now a real form, not a placeholder.
+    await expect(page.getByRole('heading', { name: 'Customer Info' })).toBeVisible();
+    await expect(page.locator('form.customer-form')).toBeVisible();
+  });
+
+  test('should show the triage controls on the dashboard', async ({ page }) => {
+    await page.goto('/');
+
+    // Slice 5 triage: sort control + hide-completed filter.
+    await expect(page.locator('.triage-controls select')).toBeVisible();
+    await expect(page.locator('.triage-controls input[type="checkbox"]')).toBeVisible();
+
+    // Each queued customer shows a "next action" hint.
+    await expect(page.locator('.customer-card .next-action').first()).toBeVisible();
   });
 });
