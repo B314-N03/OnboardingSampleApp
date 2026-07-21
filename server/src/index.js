@@ -7,7 +7,10 @@ const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '5mb' }));
+
+// Slice 2 - Import tab: CSV upload + auto-detect + preview
+app.use(require('./routes/import'));
 
 // Slice 1 - Customer Info routes (POST /api/customers, PUT /api/customers/:id/steps/:stepId)
 app.use('/api', require('./routes/customers'));

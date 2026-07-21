@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import CustomerInfo from './tabs/CustomerInfo';
+import Import from './tabs/Import';
 
 // In dev, requests go through the Vite proxy (relative path).
 // In the built app (e.g. GitHub Pages) there is no proxy, so target the
@@ -77,7 +78,7 @@ function App() {
           <PlaceholderTab title="Tenant Setup" description="Provision and configure customer tenant" />
         )}
         {activeTab === 'import' && (
-          <PlaceholderTab title="Import" description="Import customer data into the platform" />
+          <Import data={onboardingData} />
         )}
       </main>
     </div>
