@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const { detect } = require('../lib/detect');
+const { sampleRoot } = require('../lib/sampleData');
 
 const router = express.Router();
 
@@ -13,8 +14,6 @@ const SAMPLE_DIRS = {
   C: 'CustomerC_PremierBookkeeping'
 };
 
-const SAMPLE_ROOT = path.join(__dirname, '..', '..', '..', 'sample-data');
-
 // Cap how many rows we send back for the preview table. Detection still runs
 // over the full parsed data; only the response payload is trimmed.
 const PREVIEW_ROW_LIMIT = 10;
@@ -22,8 +21,14 @@ const PREVIEW_ROW_LIMIT = 10;
 function loadSampleCsv(sampleKey) {
   const dir = SAMPLE_DIRS[sampleKey];
   if (!dir) return null;
-  const file = path.join(SAMPLE_ROOT, dir, 'clients.csv');
-  return fs.readFileSync(file, 'utf8');
+  const file = path.join(sampleRoot(), dir, 'clients.csv');
+  // Guard against a missing file (e.g. sample-data not bundled) so we return a
+  // clean 400 rather than throwing and emitting an HTML 500 page.
+  try {
+    return fs.readFileSync(file, 'utf8');
+  } catch {
+    return null;
+  }
 }
 
 /**
